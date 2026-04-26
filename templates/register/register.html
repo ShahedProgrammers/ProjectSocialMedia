@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ثبت‌نام</title>
+  <link rel="stylesheet" href="{% static 'register/register.css' %}">
+  {% comment %} <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> {% endcomment %}
+</head>
+
+<body>
+
+<div class="auth-container">
+  <div class="auth-box">
+
+    <div class="logo">
+      <i class="fas fa-user-plus"></i>
+      <h1>SocialMedia</h1>
+    </div>
+
+    <h2>ساخت حساب کاربری</h2>
+    <p class="subtitle">برای شروع ثبت‌نام کنید</p>
+
+    {% if error %}
+      <p style="color:red; text-align:center;">{{ error }}</p>
+    {% endif %}
+
+    <form id="register-form" method="POST" action="{% url 'register' %}">
+      {% csrf_token %}
+
+      <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" name="email" placeholder="ایمیل" required>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-at"></i>
+        <input type="text" name="username" placeholder="نام کاربری" required>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" name="password" placeholder="رمز عبور" required>
+      </div>
+
+      <button type="submit" class="btn-primary">
+        ثبت‌نام
+      </button>
+
+    </form>
+
+    <p class="footer-text">
+      قبلاً ثبت‌نام کرده‌اید؟
+      <a href="{% url 'login' %}">ورود</a>
+    </p>
+
+  </div>
+</div>
+
+<script src="{% static 'register/register.js' %}"></script>
+
+</body>
+</html>

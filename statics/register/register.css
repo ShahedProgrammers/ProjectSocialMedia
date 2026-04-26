@@ -1,0 +1,107 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Segoe UI;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    direction:rtl;
+}
+
+.auth-container{
+    width:100%;
+    max-width:450px;
+    padding:20px;
+}
+
+.auth-box{
+    background:white;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo i{
+    font-size:45px;
+    color:#667eea;
+    margin-bottom:10px;
+}
+
+.logo h1{
+    font-size:28px;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    text-align:center;
+    color:#666;
+    margin-bottom:25px;
+    font-size:14px;
+}
+
+.input-group{
+    position:relative;
+    margin-bottom:18px;
+}
+
+.input-group i{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#999;
+    pointer-events: none; /* مزاحم کلیک/تایپ نباشد */
+}
+
+.input-group input{
+    width:100%;
+    padding:15px 50px 15px 15px; /* فضای بیشتر سمت راست برای آیکن */
+    border-radius:10px;
+    border:2px solid #e0e0e0;
+    font-size:14px;
+}
+
+
+.input-group input:focus{
+    outline:none;
+    border-color:#667eea;
+}
+
+.btn-primary{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.footer-text{
+    text-align:center;
+    margin-top:20px;
+    font-size:14px;
+}
+
+.footer-text a{
+    color:#667eea;
+    text-decoration:none;
+    font-weight:bold;
+}

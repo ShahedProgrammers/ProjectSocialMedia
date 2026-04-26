@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود</title>
+    <link rel="stylesheet" href="{% static 'login/login.css' %}">
+    {% comment %} <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> {% endcomment %}
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-box">
+        <div class="logo">
+            <i class="fas fa-share-alt"></i>
+            <h1>SocialMedia</h1>
+        </div>
+
+        <h2>ورود به حساب کاربری</h2>
+        <p class="subtitle">به شبکه اجتماعی خوش آمدید</p>
+
+        {% if error %}
+            <p style="color:red; text-align:center;">{{ error }}</p>
+        {% endif %}
+
+        <form id="login-form" method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" name="username" placeholder="ایمیل یا نام کاربری" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" placeholder="رمز عبور" required>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-sign-in-alt"></i> ورود
+            </button>
+        </form>
+
+        <div class="divider">
+            <span>یا</span>
+        </div>
+
+        <button class="btn-face" onclick="openFaceLogin()" type="button">
+            <i class="fas fa-camera"></i> ورود با تشخیص چهره
+        </button>
+
+        <p class="footer-text">
+            حساب کاربری ندارید؟ <a href="{% url 'register' %}">ثبت‌نام کنید</a>
+        </p>
+    </div>
+</div>
+
+<!-- Face Login Modal -->
+<div id="face-modal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close" onclick="closeFaceLogin()">&times;</span>
+        <h3>ورود با تشخیص چهره</h3>
+
+        <video id="face-video" autoplay></video>
+        <canvas id="face-canvas" class="hidden"></canvas>
+
+        <button class="btn-primary" onclick="captureFace()">ثبت تصویر</button>
+        <button class="btn-secondary" onclick="closeFaceLogin()">انصراف</button>
+
+        <p id="face-status"></p>
+    </div>
+</div>
+
+<script src="{% static 'login/login.js' %}"></script>
+</body>
+</html>
