@@ -11,59 +11,56 @@
 
     <!-- Font Awesome -->
 
-    <link
-      rel="stylesheet"
-      {% comment %} href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" {% endcomment %}
-    />
-
     <!-- Favicon in Png format -->
 
     <!-- <link rel="icon" type="image/png" href="/images/icon.png" /> -->
 
     <!-- CSS Stylesheet -->
 
-    <link rel="stylesheet" href="{% static "home/style.css" %}" />
+    <link rel="stylesheet" href="{% static 'home/style.css' %}" />
   </head>
   <body>
     <!-- Navigation bar -->
     <nav>
-  <!-- Container to hold all navigation elements -->
-  <div class="container">
-    <!-- Logo of SocialBook -->
-    <div class="logo">
-      <p>
-         SocialMedia
-      </p>
-    </div>
+      <!-- Container to hold all navigation elements -->
+      <div class="container">
+        <!-- Logo of SocialBook -->
+        <div class="logo">
+          <p>SocialMedia</p>
+        </div>
 
-    <!-- Search bar -->
-    <div class="search-bar">
-      <!-- Search icon -->
-      <i class="fas fa-search"></i>
-      <!-- Input field for search -->
-      <input type="search" placeholder="Search..." />
-    </div>
+        <!-- Search bar -->
+        <div class="search-bar">
+          <!-- Search icon -->
+          <i class="fas fa-search"></i>
+          <!-- Input field for search -->
+          <input type="search" placeholder="Search..." />
+        </div>
 
-    <!-- Create post button, settings, logout and profile picture -->
-    <div class="create">
-      <!-- Settings button -->
-      <a href="" class="btn btn-primary" style="text-decoration: none;">تنظیمات</a>
-      
-      <!-- Logout button -->
-      <a href="{% url 'logout' %}" class="btn btn-primary" style="text-decoration: none; background-color: #e74c3c; margin-left: 5px;">
-        <i class="fas fa-sign-out-alt"></i> خروج
-      </a>
-      
-      <!-- Profile picture container -->
-      <div class="profile-pic">
-        <!-- Profile picture image -->
-        <img src="{% static 'images/main-profile.jpg' %}" alt="" />
-        <!-- Active indicator (e.g. for online status) -->
-        <div class="active"></div>
+        <!-- Create post button, settings, logout and profile picture -->
+        <div class="create">
+          <!-- Settings button -->
+          <a href="{% url 'settings' %}" class="btn btn-primary" style="text-decoration: none;">تنظیمات</a>
+
+          <!-- Logout button -->
+          <a href="{% url 'logout' %}" class="btn btn-primary" style="text-decoration: none; background-color: #e74c3c; margin-left: 5px;"><i class="fas fa-sign-out-alt"></i> خروج</a>
+
+          <!-- Profile picture container -->
+          <a href="{% url 'profile' %}" style="text-decoration: none;">
+            <div class="profile-pic">
+              <!-- Profile picture image -->
+              {% if profile_pic %}
+                <img src="data:image/jpeg;base64,{{ profile_pic }}" alt="Profile" />
+              {% else %}
+                <img src="{% static 'images/main-profile.jpg' %}" alt="Default Profile" />
+              {% endif %}
+              <!-- Active indicator (e.g. for online status) -->
+              <div class="active"></div>
+            </div>
+          </a>
+        </div>
       </div>
-    </div>
-  </div>
-</nav>
+    </nav>
 
     <!-- Main Section -->
 
@@ -73,18 +70,25 @@
         <!-- Left section of the page, containing the profile information and sidebar -->
         <div class="left-section">
           <!-- Profile information, including profile picture and handle -->
-          <a href="#" class="profile">
-            <div class="profile-pic">
+          
+          <a href="{% url 'profile' %}" class="profile">
+            <div class="profile-pic" style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
               <!-- Profile picture image -->
-              <img src="{% static "images/main-profile.jpg" %}" alt="" />
+              {% if profile_pic %}
+                <img src="data:image/jpeg;base64,{{ profile_pic }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;" />
+              {% else %}
+                <img src="{% static 'images/main-profile.jpg' %}" alt="Default Profile" style="width: 100%; height: 100%; object-fit: cover;" />
+              {% endif %}
+              <!-- Active indicator (e.g. for online status) -->
+              <div class="active"></div>
             </div>
 
             <div class="handle">
               <!-- Profile name -->
-              <h4>Jane Smith</h4>
+              <h4>{{ username }}</h4>
               <!-- Profile handle -->
-              <p class="muted-text">@jsmith</p>
-            </div>
+              <p class="muted-text">{{ username }}</p>
+            </div> 
           </a>
 
           <!-- Sidebar, containing navigation links -->
@@ -92,9 +96,7 @@
             <!-- Home link, currently active -->
             <a href="#" class="menu-item active">
               <!-- Home icon -->
-              <span>
-                <i class="fas fa-home"></i>
-              </span>
+              <span><i class="fas fa-home"></i></span>
               <!-- Home link text -->
               <h3>Home</h3>
             </a>
@@ -102,9 +104,7 @@
             <!-- Explore link -->
             <a href="#" class="menu-item">
               <!-- Explore icon -->
-              <span>
-                <i class="fa-regular fa-compass"></i>
-              </span>
+              <span><i class="fa-regular fa-compass"></i></span>
               <!-- Explore link text -->
               <h3>Explore</h3>
             </a>
@@ -112,7 +112,7 @@
 
           <!-- End Button -->
           <!-- Create post button -->
-          <label class="btn btn-primary" >
+          <label class="btn btn-primary">
             <!-- Create post icon -->
             <i class="fas fa-plus"></i>
             <!-- Create post text -->
@@ -124,24 +124,23 @@
         <div class="middle-section">
           <!-- Stories section -->
 
-
           <!-- Post Form -->
           <!-- Form to create a new post -->
-<!--          <form class="create-post">-->
-<!--            &lt;!&ndash; Profile picture of the user creating the post &ndash;&gt;-->
-<!--            <div class="profile-pic">-->
-<!--              <img src="/images/main-profile.jpg" alt="" />-->
-<!--            </div>-->
+          <!-- <form class="create-post"> -->
+          <!-- &lt;!&ndash; Profile picture of the user creating the post &ndash;&gt; -->
+          <!-- <div class="profile-pic"> -->
+          <!-- <img src="/images/main-profile.jpg" alt="" /> -->
+          <!-- </div> -->
 
-<!--            &lt;!&ndash; Text input field for the post content &ndash;&gt;-->
-<!--            <input-->
-<!--              type="text"-->
-<!--              placeholder="What's on your mind"-->
-<!--              id="create-post"-->
-<!--            />-->
-<!--            &lt;!&ndash; Submit button to post the content &ndash;&gt;-->
-<!--            <input type="submit" value="Post" class="btn btn-primary" />-->
-<!--          </form>-->
+          <!-- &lt;!&ndash; Text input field for the post content &ndash;&gt; -->
+          <!-- <input -->
+          <!-- type="text" -->
+          <!-- placeholder="What's on your mind" -->
+          <!-- id="create-post" -->
+          <!-- /> -->
+          <!-- &lt;!&ndash; Submit button to post the content &ndash;&gt; -->
+          <!-- <input type="submit" value="Post" class="btn btn-primary" /> -->
+          <!-- </form> -->
 
           <!-- News Feed -->
           <!-- Container for the news feed content -->
@@ -156,24 +155,22 @@
                 <div class="user">
                   <!-- Profile picture of the user who posted the feed -->
                   <div class="profile-pic">
-                    <img src="{% static "images/profile-19.jpg" %}" alt="" />
+                    <img src="{% static 'images/profile-19.jpg' %}" alt="" />
                   </div>
 
                   <!-- Profile information, including name and location -->
                   <div class="info">
                     <h3>Mia Thompson</h3>
-                    <small> Dubai, 15 Minutes ago </small>
+                    <small>Dubai, 15 Minutes ago</small>
                   </div>
                 </div>
                 <!-- Edit button for the feed -->
-                <span class="edit">
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+                <span class="edit"><i class="fa-solid fa-ellipsis"></i></span>
               </div>
 
               <!-- Feed image -->
               <div class="post-img">
-                <img src="{% static "images/feed-1.jpg" %}" alt="" />
+                <img src="{% static 'images/feed-1.jpg' %}" alt="" />
               </div>
 
               <!-- Action buttons for the feed -->
@@ -181,45 +178,35 @@
                 <!-- Interaction buttons (like, comment, share) -->
                 <div class="interaction-btn">
                   <!-- Like button -->
-                  <span>
-                    <i class="fa-regular fa-heart"></i>
-                  </span>
+                  <span><i class="fa-regular fa-heart"></i></span>
 
                   <!-- Comment button -->
-                  <span>
-                    <i class="fa-regular fa-comment"></i>
-                  </span>
+                  <span><i class="fa-regular fa-comment"></i></span>
 
                   <!-- Share button -->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-paper-plane"></i>-->
-<!--                  </span>-->
+                  <!-- <span> -->
+                  <!-- <i class="fa-regular fa-paper-plane"></i> -->
+                  <!-- </span> -->
                 </div>
 
                 <!-- Bookmark button -->
-<!--                <div class="bookmark">-->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-bookmark"></i>-->
-<!--                  </span>-->
-<!--                </div>-->
+                <!-- <div class="bookmark"> -->
+                <!-- <span> -->
+                <!-- <i class="fa-regular fa-bookmark"></i> -->
+                <!-- </span> -->
+                <!-- </div> -->
               </div>
 
               <!-- Liked by section -->
               <div class="liked-by">
                 <!-- Profile pictures of users who liked the post -->
-                <span>
-                  <img src="{% static "images/profile-10.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-8.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "/images/profile-17.jpg" %}" alt="" />
-                </span>
+                <span><img src="{% static 'images/profile-10.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-8.jpg' %}" alt="" /></span>
+                <span><img src="{% static '/images/profile-17.jpg' %}" alt="" /></span>
                 <!-- Text indicating the number of users who liked the post -->
                 <p>
-                  Liked by <b> Amanda Johnson </b> and
-                  <b> 2,500 other users. </b>
+                  Liked by <b>Amanda Johnson</b> and
+                  <b>2,500 other users.</b>
                 </p>
               </div>
 
@@ -230,9 +217,7 @@
                   <b>Mia Thompson</b>
                   May your life always shine like this light.
                   <!-- Hashtags for the post -->
-                  <span class="hash-tag">
-                    #LoveYourself #ThankYou #BestGifts
-                  </span>
+                  <span class="hash-tag">#LoveYourself #ThankYou #BestGifts</span>
                 </p>
               </div>
 
@@ -248,24 +233,22 @@
                 <div class="user">
                   <!-- Profile picture of the user who posted the feed -->
                   <div class="profile-pic">
-                    <img src="{% static "images/profile-5.jpg" %}" alt="" />
+                    <img src="{% static 'images/profile-5.jpg' %}" alt="" />
                   </div>
 
                   <!-- Profile information, including name and location -->
                   <div class="info">
                     <h3>Amanda Johnson</h3>
-                    <small> New York, 20 Minutes ago </small>
+                    <small>New York, 20 Minutes ago</small>
                   </div>
                 </div>
                 <!-- Edit button for the feed -->
-                <span class="edit">
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+                <span class="edit"><i class="fa-solid fa-ellipsis"></i></span>
               </div>
 
               <!-- Feed image -->
               <div class="post-img">
-                <img src="{% static "images/feed-2.jpg" %}" alt="" />
+                <img src="{% static 'images/feed-2.jpg' %}" alt="" />
               </div>
 
               <!-- Action buttons for the feed -->
@@ -273,44 +256,34 @@
                 <!-- Interaction buttons (like, comment, share) -->
                 <div class="interaction-btn">
                   <!-- Like button -->
-                  <span>
-                    <i class="fa-regular fa-heart"></i>
-                  </span>
+                  <span><i class="fa-regular fa-heart"></i></span>
 
                   <!-- Comment button -->
-                  <span>
-                    <i class="fa-regular fa-comment"></i>
-                  </span>
+                  <span><i class="fa-regular fa-comment"></i></span>
 
                   <!-- Share button -->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-paper-plane"></i>-->
-<!--                  </span>-->
+                  <!-- <span> -->
+                  <!-- <i class="fa-regular fa-paper-plane"></i> -->
+                  <!-- </span> -->
                 </div>
                 <!-- Bookmark button -->
-<!--                <div class="bookmark">-->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-bookmark"></i>-->
-<!--                  </span>-->
-<!--                </div>-->
+                <!-- <div class="bookmark"> -->
+                <!-- <span> -->
+                <!-- <i class="fa-regular fa-bookmark"></i> -->
+                <!-- </span> -->
+                <!-- </div> -->
               </div>
 
               <!-- Liked by section -->
               <div class="liked-by">
                 <!-- Profile pictures of users who liked the post -->
-                <span>
-                  <img src="{% static "images/profile-1.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-6.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "/images/profile-7.jpg" %}" alt="" />
-                </span>
+                <span><img src="{% static 'images/profile-1.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-6.jpg' %}" alt="" /></span>
+                <span><img src="{% static '/images/profile-7.jpg' %}" alt="" /></span>
                 <!-- Text indicating the number of users who liked the post -->
                 <p>
-                  Liked by <b> Michael Johnson </b> and
-                  <b> 1,500 other users. </b>
+                  Liked by <b>Michael Johnson</b> and
+                  <b>1,500 other users.</b>
                 </p>
               </div>
 
@@ -321,8 +294,8 @@
                   <b>Amanda Johnson</b>
                   Happy birthday to my self
                   <!-- Hashtags for the post -->
-                  <span class="hash-tag"> #HappyBirthday </span>
-                  <span class="hash-tag"> #LoveYourself </span>
+                  <span class="hash-tag">#HappyBirthday</span>
+                  <span class="hash-tag">#LoveYourself</span>
                 </p>
               </div>
 
@@ -338,24 +311,22 @@
                 <div class="user">
                   <!-- Profile picture of the user who posted the feed -->
                   <div class="profile-pic">
-                    <img src="{% static "images/profile-11.jpg" %}" alt="" />
+                    <img src="{% static 'images/profile-11.jpg' %}" alt="" />
                   </div>
 
                   <!-- Profile information, including name and location -->
                   <div class="info">
                     <h3>Mark Johnson</h3>
-                    <small> London, 25 Minutes ago </small>
+                    <small>London, 25 Minutes ago</small>
                   </div>
                 </div>
                 <!-- Edit button for the feed -->
-                <span class="edit">
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+                <span class="edit"><i class="fa-solid fa-ellipsis"></i></span>
               </div>
 
               <!-- Feed image -->
               <div class="post-img">
-                <img src="{% static "images/feed-3.jpg" %}" alt="" />
+                <img src="{% static 'images/feed-3.jpg' %}" alt="" />
               </div>
 
               <!-- Action buttons for the feed -->
@@ -363,44 +334,34 @@
                 <!-- Interaction buttons (like, comment, share) -->
                 <div class="interaction-btn">
                   <!-- Like button -->
-                  <span>
-                    <i class="fa-regular fa-heart"></i>
-                  </span>
+                  <span><i class="fa-regular fa-heart"></i></span>
 
                   <!-- Comment button -->
-                  <span>
-                    <i class="fa-regular fa-comment"></i>
-                  </span>
+                  <span><i class="fa-regular fa-comment"></i></span>
 
                   <!-- Share button -->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-paper-plane"></i>-->
-<!--                  </span>-->
+                  <!-- <span> -->
+                  <!-- <i class="fa-regular fa-paper-plane"></i> -->
+                  <!-- </span> -->
                 </div>
                 <!-- Bookmark button -->
-<!--                <div class="bookmark">-->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-bookmark"></i>-->
-<!--                  </span>-->
-<!--                </div>-->
+                <!-- <div class="bookmark"> -->
+                <!-- <span> -->
+                <!-- <i class="fa-regular fa-bookmark"></i> -->
+                <!-- </span> -->
+                <!-- </div> -->
               </div>
 
               <!-- Liked by section -->
               <div class="liked-by">
                 <!-- Profile pictures of users who liked the post -->
-                <span>
-                  <img src="{% static "images/profile-3.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-4.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-11.jpg" %}" alt="" />
-                </span>
+                <span><img src="{% static 'images/profile-3.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-4.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-11.jpg' %}" alt="" /></span>
                 <p>
                   <!-- Text indicating the number of users who liked the post -->
-                  Liked by <b> Emily Johnson </b> and
-                  <b> 2,000 other users. </b>
+                  Liked by <b>Emily Johnson</b> and
+                  <b>2,000 other users.</b>
                 </p>
               </div>
 
@@ -411,8 +372,8 @@
                   <b>Mark Johnson</b>
                   Have a great holiday weekend!
                   <!-- Hashtags for the post -->
-                  <span class="hash-tag"> #HappyHolidays </span>
-                  <span class="hash-tag"> #LoveYourself </span>
+                  <span class="hash-tag">#HappyHolidays</span>
+                  <span class="hash-tag">#LoveYourself</span>
                 </p>
               </div>
 
@@ -428,24 +389,22 @@
                 <div class="user">
                   <!-- Profile picture of the user who posted the feed -->
                   <div class="profile-pic">
-                    <img src="{% static "images/profile-4.jpg" %}" alt="" />
+                    <img src="{% static 'images/profile-4.jpg' %}" alt="" />
                   </div>
 
                   <!-- Profile information, including name and location -->
                   <div class="info">
                     <h3>Emily Johnson</h3>
-                    <small> Paris, 30 Minutes ago </small>
+                    <small>Paris, 30 Minutes ago</small>
                   </div>
                 </div>
                 <!-- Edit button for the feed -->
-                <span class="edit">
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+                <span class="edit"><i class="fa-solid fa-ellipsis"></i></span>
               </div>
 
               <!-- Feed Image -->
               <div class="post-img">
-                <img src="{% static "images/feed-4.jpg" %}" alt="" />
+                <img src="{% static 'images/feed-4.jpg' %}" alt="" />
               </div>
 
               <!-- Action buttons for the feed -->
@@ -453,44 +412,34 @@
                 <!-- Interaction buttons (like, comment, share) -->
                 <div class="interaction-btn">
                   <!-- Like button -->
-                  <span>
-                    <i class="fa-regular fa-heart"></i>
-                  </span>
+                  <span><i class="fa-regular fa-heart"></i></span>
 
                   <!-- Comment button -->
-                  <span>
-                    <i class="fa-regular fa-comment"></i>
-                  </span>
+                  <span><i class="fa-regular fa-comment"></i></span>
 
                   <!-- Share button -->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-paper-plane"></i>-->
-<!--                  </span>-->
+                  <!-- <span> -->
+                  <!-- <i class="fa-regular fa-paper-plane"></i> -->
+                  <!-- </span> -->
                 </div>
                 <!-- Bookmark button -->
-<!--                <div class="bookmark">-->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-bookmark"></i>-->
-<!--                  </span>-->
-<!--                </div>-->
+                <!-- <div class="bookmark"> -->
+                <!-- <span> -->
+                <!-- <i class="fa-regular fa-bookmark"></i> -->
+                <!-- </span> -->
+                <!-- </div> -->
               </div>
 
               <!-- Liked by section -->
               <div class="liked-by">
                 <!-- Profile pictures of users who liked the post -->
-                <span>
-                  <img src="{% static "images/main-profile.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-6.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-7.jpg" %}" alt="" />
-                </span>
+                <span><img src="{% static 'images/main-profile.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-6.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-7.jpg' %}" alt="" /></span>
                 <!-- Text indicating the number of users who liked the post -->
                 <p>
-                  Liked by <b> You, Michael Johnson </b> and
-                  <b> 1,500 other users. </b>
+                  Liked by <b>You, Michael Johnson</b> and
+                  <b>1,500 other users.</b>
                 </p>
               </div>
 
@@ -501,8 +450,8 @@
                   <b>Emily Johnson</b>
                   Had great fun with my best girls.
                   <!-- Hashtags for the post -->
-                  <span class="hash-tag"> #fun </span>
-                  <span class="hash-tag"> #LoveYourself </span>
+                  <span class="hash-tag">#fun</span>
+                  <span class="hash-tag">#LoveYourself</span>
                 </p>
               </div>
 
@@ -518,24 +467,22 @@
                 <div class="user">
                   <!-- Profile picture of the user who posted the feed -->
                   <div class="profile-pic">
-                    <img src="{% static "images/profile-18.jpg" %}" alt="" />
+                    <img src="{% static 'images/profile-18.jpg' %}" alt="" />
                   </div>
 
                   <!-- Profile information, including name and location -->
                   <div class="info">
                     <h3>Sophia Scott</h3>
-                    <small> New York, 45 Minutes ago </small>
+                    <small>New York, 45 Minutes ago</small>
                   </div>
                 </div>
                 <!-- Edit button for the feed -->
-                <span class="edit">
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+                <span class="edit"><i class="fa-solid fa-ellipsis"></i></span>
               </div>
 
               <!-- Feed Image -->
               <div class="post-img">
-                <img src="{% static "images/feed-5.jpg" %}" alt="" />
+                <img src="{% static 'images/feed-5.jpg' %}" alt="" />
               </div>
 
               <!-- Action buttons for the feed -->
@@ -543,44 +490,34 @@
                 <!-- Interaction buttons (like, comment, share) -->
                 <div class="interaction-btn">
                   <!-- Like button -->
-                  <span>
-                    <i class="fa-regular fa-heart"></i>
-                  </span>
+                  <span><i class="fa-regular fa-heart"></i></span>
 
                   <!-- Comment button -->
-                  <span>
-                    <i class="fa-regular fa-comment"></i>
-                  </span>
+                  <span><i class="fa-regular fa-comment"></i></span>
 
                   <!-- Share button -->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-paper-plane"></i>-->
-<!--                  </span>-->
+                  <!-- <span> -->
+                  <!-- <i class="fa-regular fa-paper-plane"></i> -->
+                  <!-- </span> -->
                 </div>
                 <!-- Bookmark button -->
-<!--                <div class="bookmark">-->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-bookmark"></i>-->
-<!--                  </span>-->
-<!--                </div>-->
+                <!-- <div class="bookmark"> -->
+                <!-- <span> -->
+                <!-- <i class="fa-regular fa-bookmark"></i> -->
+                <!-- </span> -->
+                <!-- </div> -->
               </div>
 
               <!-- Liked by section -->
               <div class="liked-by">
                 <!-- Profile pictures of users who liked the post -->
-                <span>
-                  <img src="{% static "images/profile-7.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-9.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-10.jpg" %}" alt="" />
-                </span>
+                <span><img src="{% static 'images/profile-7.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-9.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-10.jpg' %}" alt="" /></span>
                 <p>
                   <!-- Text indicating the number of users who liked the post -->
-                  Liked by <b> Michael Johnson </b> and
-                  <b> 2,500 other users. </b>
+                  Liked by <b>Michael Johnson</b> and
+                  <b>2,500 other users.</b>
                 </p>
               </div>
 
@@ -591,8 +528,8 @@
                   <b>Sophia Scott</b>
                   Friends over for dinner.
                   <!-- Hashtags for the post -->
-                  <span class="hash-tag"> #Food </span>
-                  <span class="hash-tag"> #LoveYourself </span>
+                  <span class="hash-tag">#Food</span>
+                  <span class="hash-tag">#LoveYourself</span>
                 </p>
               </div>
 
@@ -606,67 +543,55 @@
                 <div class="user">
                   <!-- Profile Picture -->
                   <div class="profile-pic">
-                    <img src="{% static "images/profile-2.jpg" %}" alt="" />
+                    <img src="{% static 'images/profile-2.jpg' %}" alt="" />
                   </div>
 
                   <!-- Profile Information -->
                   <div class="info">
                     <h3>Michael Johnson</h3>
-                    <small> London, 1 hour ago </small>
+                    <small>London, 1 hour ago</small>
                   </div>
                 </div>
 
-                <span class="edit">
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+                <span class="edit"><i class="fa-solid fa-ellipsis"></i></span>
               </div>
 
               <!-- Feed Image -->
               <div class="post-img">
-                <img src="{% static "images/feed-6.jpg" %}" alt="" />
+                <img src="{% static 'images/feed-6.jpg' %}" alt="" />
               </div>
 
               <!-- Action Buttons -->
               <div class="action-btn">
                 <div class="interaction-btn">
                   <!-- Like -->
-                  <span>
-                    <i class="fa-regular fa-heart"></i>
-                  </span>
+                  <span><i class="fa-regular fa-heart"></i></span>
 
                   <!-- Comment -->
-                  <span>
-                    <i class="fa-regular fa-comment"></i>
-                  </span>
+                  <span><i class="fa-regular fa-comment"></i></span>
 
                   <!-- Share -->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-paper-plane"></i>-->
-<!--                  </span>-->
+                  <!-- <span> -->
+                  <!-- <i class="fa-regular fa-paper-plane"></i> -->
+                  <!-- </span> -->
                 </div>
 
-<!--                <div class="bookmark">-->
-<!--                  &lt;!&ndash; Bookmark &ndash;&gt;-->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-bookmark"></i>-->
-<!--                  </span>-->
-<!--                </div>-->
+                <!-- <div class="bookmark"> -->
+                <!-- &lt;!&ndash; Bookmark &ndash;&gt; -->
+                <!-- <span> -->
+                <!-- <i class="fa-regular fa-bookmark"></i> -->
+                <!-- </span> -->
+                <!-- </div> -->
               </div>
 
               <div class="liked-by">
                 <!-- Liked By -->
-                <span>
-                  <img src="{% static "images/profile-10.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-7.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-8.jpg" %}" alt="" />
-                </span>
+                <span><img src="{% static 'images/profile-10.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-7.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-8.jpg' %}" alt="" /></span>
                 <p>
-                  Liked by <b> Sarah Wilson </b> and
-                  <b> 3,000 other users. </b>
+                  Liked by <b>Sarah Wilson</b> and
+                  <b>3,000 other users.</b>
                 </p>
               </div>
 
@@ -675,8 +600,8 @@
                 <p>
                   <b>Michael Johnson</b>
                   Playing with this new game
-                  <span class="hash-tag"> #Gaming </span>
-                  <span class="hash-tag"> #LoveYourself </span>
+                  <span class="hash-tag">#Gaming</span>
+                  <span class="hash-tag">#LoveYourself</span>
                 </p>
               </div>
 
@@ -690,67 +615,55 @@
                 <div class="user">
                   <!-- Profile Picture -->
                   <div class="profile-pic">
-                    <img src="{% static "images/profile-3.jpg" %}" alt="" />
+                    <img src="{% static 'images/profile-3.jpg' %}" alt="" />
                   </div>
 
                   <!-- Profile Information -->
                   <div class="info">
                     <h3>Jessica Brown</h3>
-                    <small> Paris, 1 day ago </small>
+                    <small>Paris, 1 day ago</small>
                   </div>
                 </div>
 
-                <span class="edit">
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+                <span class="edit"><i class="fa-solid fa-ellipsis"></i></span>
               </div>
 
               <!-- Feed Image -->
               <div class="post-img">
-                <img src="{% static "images/feed-7.jpg" %}" alt="" />
+                <img src="{% static 'images/feed-7.jpg' %}" alt="" />
               </div>
 
               <!-- Action Buttons -->
               <div class="action-btn">
                 <div class="interaction-btn">
                   <!-- Like -->
-                  <span>
-                    <i class="fa-regular fa-heart"></i>
-                  </span>
+                  <span><i class="fa-regular fa-heart"></i></span>
 
                   <!-- Comment -->
-                  <span>
-                    <i class="fa-regular fa-comment"></i>
-                  </span>
+                  <span><i class="fa-regular fa-comment"></i></span>
 
                   <!-- Share -->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-paper-plane"></i>-->
-<!--                  </span>-->
+                  <!-- <span> -->
+                  <!-- <i class="fa-regular fa-paper-plane"></i> -->
+                  <!-- </span> -->
                 </div>
 
-<!--                <div class="bookmark">-->
-<!--                  &lt;!&ndash; Bookmark &ndash;&gt;-->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-bookmark"></i>-->
-<!--                  </span>-->
-<!--                </div>-->
+                <!-- <div class="bookmark"> -->
+                <!-- &lt;!&ndash; Bookmark &ndash;&gt; -->
+                <!-- <span> -->
+                <!-- <i class="fa-regular fa-bookmark"></i> -->
+                <!-- </span> -->
+                <!-- </div> -->
               </div>
 
               <div class="liked-by">
                 <!-- Liked By -->
-                <span>
-                  <img src="{% static "images/profile-1.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-2.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-4.jpg" %}" alt="" />
-                </span>
+                <span><img src="{% static 'images/profile-1.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-2.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-4.jpg' %}" alt="" /></span>
                 <p>
-                  Liked by <b> Emily Johnson </b> and
-                  <b> 2,000 other users. </b>
+                  Liked by <b>Emily Johnson</b> and
+                  <b>2,000 other users.</b>
                 </p>
               </div>
 
@@ -759,8 +672,8 @@
                 <p>
                   <b>Jessica Brown</b>
                   Shopping at the mall
-                  <span class="hash-tag"> #Shopping </span>
-                  <span class="hash-tag"> #LoveYourself </span>
+                  <span class="hash-tag">#Shopping</span>
+                  <span class="hash-tag">#LoveYourself</span>
                 </p>
               </div>
 
@@ -774,67 +687,55 @@
                 <div class="user">
                   <!-- Profile Picture -->
                   <div class="profile-pic">
-                    <img src="{% static "images/profile-12.jpg" %}" alt="" />
+                    <img src="{% static 'images/profile-12.jpg' %}" alt="" />
                   </div>
 
                   <!-- Profile Information -->
                   <div class="info">
                     <h3>Emily Davis</h3>
-                    <small> Paris, 1 day ago </small>
+                    <small>Paris, 1 day ago</small>
                   </div>
                 </div>
 
-                <span class="edit">
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+                <span class="edit"><i class="fa-solid fa-ellipsis"></i></span>
               </div>
 
               <!-- Feed Image -->
               <div class="post-img">
-                <img src="{% static "images/feed-8.jpg" %}" alt="" />
+                <img src="{% static 'images/feed-8.jpg' %}" alt="" />
               </div>
 
               <!-- Action Buttons -->
               <div class="action-btn">
                 <div class="interaction-btn">
                   <!-- Like -->
-                  <span>
-                    <i class="fa-regular fa-heart"></i>
-                  </span>
+                  <span><i class="fa-regular fa-heart"></i></span>
 
                   <!-- Comment -->
-                  <span>
-                    <i class="fa-regular fa-comment"></i>
-                  </span>
+                  <span><i class="fa-regular fa-comment"></i></span>
 
                   <!-- Share -->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-paper-plane"></i>-->
-<!--                  </span>-->
+                  <!-- <span> -->
+                  <!-- <i class="fa-regular fa-paper-plane"></i> -->
+                  <!-- </span> -->
                 </div>
 
-<!--                <div class="bookmark">-->
-<!--                  &lt;!&ndash; Bookmark &ndash;&gt;-->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-bookmark"></i>-->
-<!--                  </span>-->
-<!--                </div>-->
+                <!-- <div class="bookmark"> -->
+                <!-- &lt;!&ndash; Bookmark &ndash;&gt; -->
+                <!-- <span> -->
+                <!-- <i class="fa-regular fa-bookmark"></i> -->
+                <!-- </span> -->
+                <!-- </div> -->
               </div>
 
               <div class="liked-by">
                 <!-- Liked By -->
-                <span>
-                  <img src="{% static "images/profile-1.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-2.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-4.jpg" %}" alt="" />
-                </span>
+                <span><img src="{% static 'images/profile-1.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-2.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-4.jpg' %}" alt="" /></span>
                 <p>
-                  Liked by <b> Emily Johnson </b> and
-                  <b> 2,050 other users. </b>
+                  Liked by <b>Emily Johnson</b> and
+                  <b>2,050 other users.</b>
                 </p>
               </div>
 
@@ -843,8 +744,8 @@
                 <p>
                   <b>Emily Davis</b>
                   Chess match between me and my daughter
-                  <span class="hash-tag"> #Chess </span>
-                  <span class="hash-tag"> #LoveYourself </span>
+                  <span class="hash-tag">#Chess</span>
+                  <span class="hash-tag">#LoveYourself</span>
                 </p>
               </div>
 
@@ -858,68 +759,56 @@
                 <div class="user">
                   <!-- Profile Picture -->
                   <div class="profile-pic">
-                    <img src="{% static "images/profile-13.jpg" %}" alt="" />
+                    <img src="{% static 'images/profile-13.jpg' %}" alt="" />
                   </div>
 
                   <!-- Profile Information -->
                   <div class="info">
                     <h3>Sarah Wilson</h3>
-                    <small> California, 2 day ago </small>
+                    <small>California, 2 day ago</small>
                   </div>
                 </div>
 
-                <span class="edit">
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+                <span class="edit"><i class="fa-solid fa-ellipsis"></i></span>
               </div>
 
               <!-- Feed Image -->
               <div class="post-img">
-                <img src="{% static "images/feed-9.jpg" %}" alt="" />
+                <img src="{% static 'images/feed-9.jpg' %}" alt="" />
               </div>
 
               <!-- Action Buttons -->
               <div class="action-btn">
                 <div class="interaction-btn">
                   <!-- Like -->
-                  <span>
-                    <i class="fa-regular fa-heart"></i>
-                  </span>
+                  <span><i class="fa-regular fa-heart"></i></span>
 
                   <!-- Comment -->
-                  <span>
-                    <i class="fa-regular fa-comment"></i>
-                  </span>
+                  <span><i class="fa-regular fa-comment"></i></span>
 
                   <!-- Share -->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-paper-plane"></i>-->
-<!--                  </span>-->
+                  <!-- <span> -->
+                  <!-- <i class="fa-regular fa-paper-plane"></i> -->
+                  <!-- </span> -->
                 </div>
 
-<!--                <div class="bookmark">-->
-<!--                  &lt;!&ndash; Bookmark &ndash;&gt;-->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-bookmark"></i>-->
-<!--                  </span>-->
-<!--                </div>-->
+                <!-- <div class="bookmark"> -->
+                <!-- &lt;!&ndash; Bookmark &ndash;&gt; -->
+                <!-- <span> -->
+                <!-- <i class="fa-regular fa-bookmark"></i> -->
+                <!-- </span> -->
+                <!-- </div> -->
               </div>
 
               <div class="liked-by">
                 <!-- Liked By -->
-                <span>
-                  <img src="{% static "images/profile-1.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-2.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-4.jpg" %}" alt="" />
-                </span>
+                <span><img src="{% static 'images/profile-1.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-2.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-4.jpg' %}" alt="" /></span>
 
                 <p>
-                  Liked by <b> Emily Johnson </b> and
-                  <b> 1,050 other users. </b>
+                  Liked by <b>Emily Johnson</b> and
+                  <b>1,050 other users.</b>
                 </p>
               </div>
 
@@ -927,10 +816,9 @@
               <div class="caption">
                 <p>
                   <b>Sarah Wilson</b>
-                  Trying to learn and play the 8-Ball pool game with my favorite
-                  person
-                  <span class="hash-tag"> #Pool </span>
-                  <span class="hash-tag"> #LoveYourself </span>
+                  Trying to learn and play the 8-Ball pool game with my favorite person
+                  <span class="hash-tag">#Pool</span>
+                  <span class="hash-tag">#LoveYourself</span>
                 </p>
               </div>
 
@@ -944,68 +832,56 @@
                 <div class="user">
                   <!-- Profile Picture -->
                   <div class="profile-pic">
-                    <img src="{% static "images/profile-8.jpg" %}" alt="" />
+                    <img src="{% static 'images/profile-8.jpg' %}" alt="" />
                   </div>
 
                   <!-- Profile Information -->
                   <div class="info">
                     <h3>Alexander Carter</h3>
-                    <small> Australia, 3 days ago </small>
+                    <small>Australia, 3 days ago</small>
                   </div>
                 </div>
 
-                <span class="edit">
-                  <i class="fa-solid fa-ellipsis"></i>
-                </span>
+                <span class="edit"><i class="fa-solid fa-ellipsis"></i></span>
               </div>
 
               <!-- Feed Image -->
               <div class="post-img">
-                <img src="{% static "images/feed-10.jpg" %}" alt="" />
+                <img src="{% static 'images/feed-10.jpg' %}" alt="" />
               </div>
 
               <!-- Action Buttons -->
               <div class="action-btn">
                 <div class="interaction-btn">
                   <!-- Like -->
-                  <span>
-                    <i class="fa-regular fa-heart"></i>
-                  </span>
+                  <span><i class="fa-regular fa-heart"></i></span>
 
                   <!-- Comment -->
-                  <span>
-                    <i class="fa-regular fa-comment"></i>
-                  </span>
+                  <span><i class="fa-regular fa-comment"></i></span>
 
                   <!-- Share -->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-paper-plane"></i>-->
-<!--                  </span>-->
+                  <!-- <span> -->
+                  <!-- <i class="fa-regular fa-paper-plane"></i> -->
+                  <!-- </span> -->
                 </div>
 
-<!--                <div class="bookmark">-->
-<!--                  &lt;!&ndash; Bookmark &ndash;&gt;-->
-<!--                  <span>-->
-<!--                    <i class="fa-regular fa-bookmark"></i>-->
-<!--                  </span>-->
-<!--                </div>-->
+                <!-- <div class="bookmark"> -->
+                <!-- &lt;!&ndash; Bookmark &ndash;&gt; -->
+                <!-- <span> -->
+                <!-- <i class="fa-regular fa-bookmark"></i> -->
+                <!-- </span> -->
+                <!-- </div> -->
               </div>
 
               <div class="liked-by">
                 <!-- Liked By -->
-                <span>
-                  <img src="{% static "images/profile-1.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-2.jpg" %}" alt="" />
-                </span>
-                <span>
-                  <img src="{% static "images/profile-4.jpg" %}" alt="" />
-                </span>
+                <span><img src="{% static 'images/profile-1.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-2.jpg' %}" alt="" /></span>
+                <span><img src="{% static 'images/profile-4.jpg' %}" alt="" /></span>
 
                 <p>
-                  Liked by <b> Emily Johnson </b> and
-                  <b> 1,050 other users. </b>
+                  Liked by <b>Emily Johnson</b> and
+                  <b>1,050 other users.</b>
                 </p>
               </div>
 
@@ -1014,8 +890,8 @@
                 <p>
                   <b>Alexander Carter</b>
                   My three little angels are having fun on the beach.
-                  <span class="hash-tag"> #Beach </span>
-                  <span class="hash-tag"> #LoveYourself </span>
+                  <span class="hash-tag">#Beach</span>
+                  <span class="hash-tag">#LoveYourself</span>
                 </p>
               </div>
 
@@ -1026,9 +902,6 @@
             <!-- end tag -->
           </div>
         </div>
-
-
-
       </div>
     </main>
     <!-- Custom Themes section -->
@@ -1038,9 +911,7 @@
         <!-- Heading for the custom theme section -->
         <h2>Customize Your Theme</h2>
         <!-- Description of the custom theme options -->
-        <p class="muted-text">
-          Manage your font size, color and background color
-        </p>
+        <p class="muted-text">Manage your font size, color and background color</p>
 
         <!-- Font Sizes section -->
         <div class="font-size">
@@ -1121,6 +992,6 @@
     </div>
 
     <!-- JavaScript file inclusion -->
-    <script src="{% static "home/app.js" %}"></script>
+    <script src="{% static 'home/app.js' %}"></script>
   </body>
 </html>

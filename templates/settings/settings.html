@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تنظیمات</title>
+    <link rel="stylesheet" href="{% static 'settings/settings.css' %}">
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="nav-container">
+
+        <!-- Right: Logo -->
+        <div class="nav-right">
+            <h2 class="logo">شبکه اجتماعی</h2>
+        </div>
+
+        <!-- Center: Links -->
+        <div class="nav-center">
+            <a href="{% url 'home' %}">خانه</a>
+            <a href="{% url 'profile' %}">پروفایل</a>
+            <a href="{% url 'settings' %}" class="active">تنظیمات</a>
+        </div>
+
+        <!-- Left: User -->
+        <div class="nav-left">
+            {% if profile_pic %}
+                <img src="data:image/jpeg;base64,{{ profile_pic }}" class="nav-avatar">
+            {% else %}
+                <img src="{% static 'default-avatar.png' %}" class="nav-avatar">
+            {% endif %}
+            <a href="{% url 'logout' %}" class="logout-btn">خروج</a>
+        </div>
+
+    </div>
+</nav>
+
+
+<div class="settings-container">
+    <h1>تنظیمات حساب کاربری</h1>
+
+    <!-- Change Password Section -->
+    <div class="settings-card">
+        <div class="card-header">
+            <h2>🔒 تغییر رمز عبور</h2>
+        </div>
+        <form method="POST" action="{% url 'change_password' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>رمز عبور فعلی</label>
+                <input type="password" name="current_password" required>
+            </div>
+
+            <div class="form-group">
+                <label>رمز عبور جدید</label>
+                <input type="password" name="new_password" required minlength="8">
+            </div>
+
+            <div class="form-group">
+                <label>تکرار رمز عبور جدید</label>
+                <input type="password" name="confirm_password" required>
+            </div>
+
+            <button type="submit" class="btn-primary">تغییر رمز عبور</button>
+
+            {% if error %}
+                <div class="message error">{{ error }}</div>
+            {% endif %}
+
+            {% if success %}
+                <div class="message success">{{ success }}</div>
+            {% endif %}
+
+        </form>
+    </div>
+
+    <!-- Face Recognition Section -->
+    <div class="settings-card">
+        <div class="card-header">
+            <h2>👤 ورود با تشخیص چهره</h2>
+            <div class="toggle-switch">
+                <input type="checkbox" id="faceLoginToggle" onchange="toggleFaceLogin()">
+                <label for="faceLoginToggle"></label>
+            </div>
+        </div>
+
+        <div id="faceSetupSection" class="face-setup" style="display: none;">
+            <p class="info-text">برای فعال‌سازی ورود با چهره، ابتدا باید تصویر چهره خود را ثبت کنید.</p>
+
+            <div class="face-capture-area">
+                <video id="video" autoplay></video>
+                <canvas id="canvas" style="display: none;"></canvas>
+                <div id="capturedImages" class="captured-images"></div>
+            </div>
+
+            <div class="face-status" id="faceStatus">
+                <span id="statusText">آماده ثبت تصویر</span>
+                <span id="imageCount">0/5 تصویر ثبت شده</span>
+            </div>
+
+            <div class="face-buttons">
+                <button onclick="startCamera()" class="btn-secondary" id="startCameraBtn">شروع دوربین</button>
+                <button onclick="captureImage()" class="btn-primary" id="captureBtn" disabled>ثبت تصویر</button>
+                <button onclick="submitFaceData()" class="btn-success" id="submitBtn" disabled>تایید و ذخیره</button>
+                <button onclick="resetCapture()" class="btn-danger">شروع مجدد</button>
+            </div>
+
+            <div id="faceMessage" class="message"></div>
+        </div>
+
+        <div id="faceActiveSection" class="face-active" style="display: none;">
+            <div class="success-box">
+                <span class="check-icon">✓</span>
+                <p>ورود با تشخیص چهره فعال است</p>
+                <button onclick="updateFaceData()" class="btn-secondary">به‌روزرسانی تصاویر چهره</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Delete Account Section -->
+    <div class="settings-card danger-card">
+        <div class="card-header">
+            <h2>⚠️ حذف حساب کاربری</h2>
+        </div>
+
+        <p class="danger-text">
+            با حذف حساب کاربری، تمام اطلاعات شما شامل پست‌ها، کامنت‌ها و دنبال‌کنندگان حذف خواهد شد.
+        </p>
+
+        <form method="POST" action="{% url 'delete_account' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>برای تایید، رمز عبور خود را وارد کنید</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn-danger">
+                حذف حساب کاربری
+            </button>
+
+            {% if error %}
+                <div class="message error">{{ error }}</div>
+            {% endif %}
+
+        </form>
+    </div>
+
+</div>
+
+<script src="{% static 'settings/settings.js' %}"></script>
+</body>
+</html>

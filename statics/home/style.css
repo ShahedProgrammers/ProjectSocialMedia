@@ -770,6 +770,7 @@ main .container .right-section {
 
 /* Media Queries */
 
+
 @media screen and (max-width: 1200px) {
   /* Styling for screen size smaller than 1200px */
   .container {

@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پروفایل</title>
+  <link rel="stylesheet" href="{% static 'profile/profile.css' %}">
+  <style>
+    .stat-item.clickable { cursor: pointer; transition: all 0.2s; }
+    .stat-item.clickable:hover { background: #eef2ff; transform: translateY(-2px); }
+    .post-item { position: relative; overflow: hidden; border-radius: 14px; aspect-ratio: 1/1; background: #f0f0f0; display:flex; align-items:center; justify-content:center; }
+    .post-item img { width:100%; height:100%; object-fit:cover; transition: transform 0.3s; }
+    .post-item:hover img { transform: scale(1.05); }
+    .modal-content { animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
+    .profile-image img { background: #e5e7eb; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <div class="logo"><h2>شبکه اجتماعی</h2></div>
+    <div class="nav-links">
+      <a href="{% url 'home' %}">خانه</a>
+      <a href="{% url 'profile' %}" class="active">پروفایل</a>
+      <a href="{% url 'logout' %}">خروج</a>
+    </div>
+  </div>
+</nav>
+
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="profile-image">
+      {% if profile_pic %}
+        <img id="profileImg" src="data:image/jpeg;base64,{{ profile_pic }}" alt="profile">
+      {% else %}
+        <img id="profileImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='60' dy='.3em'%3E👤%3C/text%3E%3C/svg%3E" alt="default profile">
+      {% endif %}
+    </div>
+
+    <div class="profile-info">
+      <div class="profile-top">
+        <h1 id="username">{{ profile.username }}</h1>
+        <button class="edit-profile-btn" id="editProfileBtn">ویرایش پروفایل</button>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat-item">
+          <span class="stat-number" id="postsCount">0</span>
+          <span class="stat-label">پست</span>
+        </div>
+        <div class="stat-item clickable" id="followersStat">
+          <span class="stat-number" id="followersCount">0</span>
+          <span class="stat-label">دنبال‌کننده</span>
+        </div>
+        <div class="stat-item clickable" id="followingStat">
+          <span class="stat-number" id="followingCount">0</span>
+          <span class="stat-label">دنبال‌شونده</span>
+        </div>
+      </div>
+
+      <div class="profile-bio">
+        <h3>{{ profile.username }}</h3>
+        <p id="bio">
+          {% if profile.bio %}
+            {{ profile.bio }}
+          {% else %}
+            بیوگرافی ثبت نشده
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="posts-section">
+    <div class="section-header">
+      <h2>پست‌های من</h2>
+    </div>
+    <div class="posts-grid" id="postsGrid"></div>
+  </div>
+</div>
+
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>ویرایش پروفایل</h2>
+      <span class="close-btn" id="closeModalBtn">&times;</span>
+    </div>
+    <div class="modal-body">
+      <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data" id="editProfileForm">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>بیوگرافی</label>
+          <textarea name="bio" id="editBio" rows="4">{{ profile.bio|default:'' }}</textarea>
+        </div>
+        <div class="form-group">
+          <label>تصویر پروفایل</label>
+          <input type="file" name="profile_pic" id="editProfilePicInput" accept="image/*">
+        </div>
+        <button type="submit" class="save-btn">ذخیره تغییرات</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'profile/profile.js' %}">
+
+</script>
+
+</body></html>
+
