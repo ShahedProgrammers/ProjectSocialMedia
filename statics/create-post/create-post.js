@@ -151,7 +151,7 @@ postForm.addEventListener("submit", (e) => {
     }
 
     if (tagsInput) {
-        tagsInput.value = hashtags.map(tag => tag.replace(/^#/, "")).join(",");
+        tagsInput.value = hashtags.join(",");
     }
 });
 
