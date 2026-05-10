@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if post %}ویرایش پست{% else %}ایجاد پست جدید{% endif %}</title>
+  <link rel="stylesheet" href="{% static 'create-post/create-post.css' %}">
+</head>
+<body>
+
+<!-- Navbar -->
+<header class="navbar">
+  <div class="nav-container">
+    <div class="logo">
+      <h2 class="logo">شبکه اجتماعی</h2>
+    </div>
+    <nav class="nav-links">
+      <a href="{% url 'home' %}">خانه</a>
+      <a href="{% url 'create_post' %}" class="active">ایجاد پست</a>
+      <a href="{% url 'profile' %}">پروفایل</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Main -->
+<main class="create-post-container">
+  <!-- Form -->
+  <section class="form-card">
+    <h2>{% if post %}ویرایش پست{% else %}ایجاد پست جدید{% endif %}</h2>
+
+    <form id="postForm" method="POST" enctype="multipart/form-data"
+          action="{% if post %}{% url 'edit_post' post.post_id %}{% else %}{% url 'create_post' %}{% endif %}">
+      {% csrf_token %}
+      <label id="contentLabel">محتوای پست</label>
+      <textarea id="postContent" name="caption" placeholder="چه چیزی در ذهن دارید؟" {% if not post %}required{% endif %}>{{ post.caption|default:'' }}</textarea>
+
+      {% if not post %}
+      <label>هشتگ‌ها</label>
+      <input type="text" id="hashtagInput" placeholder="هشتگ را وارد و Enter بزنید">
+      <input type="hidden" name="tags" id="tagsInput">
+      <div id="hashtagList" class="hashtag-list"></div>
+
+      <label>بارگذاری عکس/ویدیو</label>
+      <div class="upload-box">
+        <input type="file" id="mediaInput" name="media" accept="image/*,video/*">
+        <div id="uploadPlaceholder">کلیک برای انتخاب فایل</div>
+
+        <div id="mediaPreview">
+          <button type="button" id="removeMediaBtn">✕</button>
+          <div id="mediaHolder"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <label class="switch">
+          <input type="checkbox" id="commentsEnabled" name="comments_enabled" checked>
+          <span>فعال بودن نظرات</span>
+        </label>
+      </div>
+
+      <div class="row">
+        <label class="switch">
+          <input type="checkbox" id="scheduleToggle">
+          <span>زمان‌بندی انتشار</span>
+        </label>
+      </div>
+
+      <div id="scheduleSection">
+        <input type="datetime-local" id="scheduleTime" name="scheduled_time">
+      </div>
+      {% elif post.media_url %}
+      <div class="current-media">
+        <span>رسانه فعلی</span>
+        {% if post.media_type == 'image' %}
+          <img src="{{ post.media_url }}" alt="post media">
+        {% elif post.media_type == 'video' %}
+          <video src="{{ post.media_url }}" controls></video>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if error %}
+        <p id="postMessage" class="error-message">{{ error }}</p>
+      {% else %}
+        <p id="postMessage"></p>
+      {% endif %}
+
+      <div class="actions">
+        <button type="submit" class="btn-primary">{% if post %}ذخیره تغییرات{% else %}ارسال پست{% endif %}</button>
+        <a href="{% url 'create_post' %}" class="btn-secondary">انصراف</a>
+      </div>
+    </form>
+  </section>
+
+  <!-- Preview -->
+  <section class="preview-card">
+    <h3>پیش‌نمایش</h3>
+    <div id="previewText" class="preview-text">{{ post.caption|default:'...' }}</div>
+    <div id="previewMedia"></div>
+    <div id="previewHashtags" class="preview-hashtags"></div>
+  </section>
+</main>
+
+<section class="my-posts">
+  <h2>پست‌های من</h2>
+  {% if posts %}
+    <div class="post-list">
+      {% for item in posts %}
+        <article class="post-item">
+          <div>
+            <strong>
+              {% if item.media_type == 'text' %}پست متنی{% elif item.media_type == 'image' %}عکس{% else %}ویدیو{% endif %}
+            </strong>
+            <p>{{ item.caption|default:'بدون متن' }}</p>
+            {% if item.media_url %}
+              <a href="{{ item.media_url }}" target="_blank">مشاهده رسانه</a>
+            {% endif %}
+          </div>
+          <div class="post-actions">
+            <a href="{% url 'edit_post' item.post_id %}" class="edit-link">ویرایش</a>
+            <form method="POST" action="{% url 'delete_post' item.post_id %}">
+              {% csrf_token %}
+              <button type="submit" class="delete-link" onclick="return confirm('این پست حذف شود؟')">حذف</button>
+            </form>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty-posts">هنوز پستی ثبت نکرده‌اید.</p>
+  {% endif %}
+</section>
+
+<script src="{% static 'create-post/create-post.js' %}"></script>
+</body>
+</html>

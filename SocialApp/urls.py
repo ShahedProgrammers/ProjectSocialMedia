@@ -10,7 +10,10 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile_view, name='edit_profile'),
     path('settings/', views.settings_view, name='settings'),
     path('settings/change-password/', views.change_password_view, name='change_password'),
-    path('settings/delete-account/', views.delete_account_view, name='delete_account')
+    path('settings/delete-account/', views.delete_account_view, name='delete_account'),
+    path('posts/create/', views.create_post_view, name='create_post'),
+    path('posts/<int:post_id>/edit/', views.create_post_view, name='edit_post'),
+    path('posts/<int:post_id>/delete/', views.delete_post_view, name='delete_post')
 
     
 ]
