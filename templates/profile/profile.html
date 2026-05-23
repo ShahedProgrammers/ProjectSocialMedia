@@ -6,16 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>پروفایل</title>
   <link rel="stylesheet" href="{% static 'profile/profile.css' %}">
-  <style>
-    .stat-item.clickable { cursor: pointer; transition: all 0.2s; }
-    .stat-item.clickable:hover { background: #eef2ff; transform: translateY(-2px); }
-    .post-item { position: relative; overflow: hidden; border-radius: 14px; aspect-ratio: 1/1; background: #f0f0f0; display:flex; align-items:center; justify-content:center; }
-    .post-item img { width:100%; height:100%; object-fit:cover; transition: transform 0.3s; }
-    .post-item:hover img { transform: scale(1.05); }
-    .modal-content { animation: fadeIn 0.2s ease; }
-    @keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
-    .profile-image img { background: #e5e7eb; }
-  </style>
 </head>
 <body>
 
@@ -24,7 +14,8 @@
     <div class="logo"><h2>شبکه اجتماعی</h2></div>
     <div class="nav-links">
       <a href="{% url 'home' %}">خانه</a>
-      <a href="{% url 'profile' %}" class="active">پروفایل</a>
+      <a href="{% url 'explore' %}">اکسپلور</a>
+      <a href="{% url 'profile' %}">پروفایل</a>
       <a href="{% url 'logout' %}">خروج</a>
     </div>
   </div>
@@ -43,20 +34,24 @@
     <div class="profile-info">
       <div class="profile-top">
         <h1 id="username">{{ profile.username }}</h1>
+        {% if is_own_profile %}
         <button class="edit-profile-btn" id="editProfileBtn">ویرایش پروفایل</button>
+        {% else %}
+        <a href="{% url 'explore' %}" class="edit-profile-btn back-btn">بازگشت به اکسپلور</a>
+        {% endif %}
       </div>
 
       <div class="profile-stats">
         <div class="stat-item">
-          <span class="stat-number" id="postsCount">0</span>
+          <span class="stat-number" id="postsCount">{{ posts_count }}</span>
           <span class="stat-label">پست</span>
         </div>
         <div class="stat-item clickable" id="followersStat">
-          <span class="stat-number" id="followersCount">0</span>
+          <span class="stat-number" id="followersCount">{{ followers_count }}</span>
           <span class="stat-label">دنبال‌کننده</span>
         </div>
         <div class="stat-item clickable" id="followingStat">
-          <span class="stat-number" id="followingCount">0</span>
+          <span class="stat-number" id="followingCount">{{ followings_count }}</span>
           <span class="stat-label">دنبال‌شونده</span>
         </div>
       </div>
@@ -76,12 +71,58 @@
 
   <div class="posts-section">
     <div class="section-header">
-      <h2>پست‌های من</h2>
+      <h2>{% if is_own_profile %}پست‌های من{% else %}پست‌های {{ profile.username }}{% endif %}</h2>
     </div>
-    <div class="posts-grid" id="postsGrid"></div>
+
+    <div class="posts-grid" id="postsGrid">
+      {% for post in posts %}
+      <article class="post-card">
+        <div class="post-media">
+          {% if post.media_type == 'image' and post.media_url %}
+            <img src="{{ post.media_url }}" alt="پست">
+          {% elif post.media_type == 'video' and post.media_url %}
+            <video src="{{ post.media_url }}" controls></video>
+          {% else %}
+            <div class="post-text-preview">{{ post.caption|truncatechars:120 }}</div>
+          {% endif %}
+        </div>
+
+        <div class="post-body">
+          {% if post.caption and post.media_url %}
+            <p class="post-caption">{{ post.caption|truncatechars:80 }}</p>
+          {% endif %}
+
+          <div class="post-meta">
+            <button
+              type="button"
+              class="like-btn{% if post.is_liked %} liked{% endif %}"
+              data-post-id="{{ post.post_id }}"
+              data-is-liked="{{ post.is_liked|yesno:'true,false' }}"
+              title="لایک / آنلایک"
+            >
+              <span class="like-icon">❤</span>
+              <span class="like-count">{{ post.like_count }}</span>
+            </button>
+            <button type="button" class="comments-btn" data-post-id="{{ post.post_id }}">
+              مشاهده کامنت‌ها
+            </button>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <p class="empty-posts">
+        {% if is_own_profile %}
+          هنوز پستی منتشر نکرده‌اید.
+        {% else %}
+          این کاربر هنوز پستی منتشر نکرده است.
+        {% endif %}
+      </p>
+      {% endfor %}
+    </div>
   </div>
 </div>
 
+{% if is_own_profile %}
 <div id="editModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -104,10 +145,28 @@
     </div>
   </div>
 </div>
+{% endif %}
 
-<script src="{% static 'profile/profile.js' %}">
+<form id="csrfForm" style="display:none">{% csrf_token %}</form>
 
+<div id="commentsModal" class="modal">
+  <div class="modal-content comments-modal-content">
+    <div class="modal-header">
+      <h2>کامنت‌های پست</h2>
+      <span class="close-btn" id="closeCommentsModalBtn">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div id="commentsLoading" class="comments-loading">در حال بارگذاری...</div>
+      <div id="commentsList" class="comments-list"></div>
+      <p id="commentsEmpty" class="comments-empty" style="display:none;">هنوز کامنتی ثبت نشده.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.PROFILE_COMMENTS_BASE = "{% url 'post_comments' 0 %}";
+  window.PROFILE_LIKE_URL = "{% url 'toggle_like' 0 %}";
 </script>
+<script src="{% static 'profile/profile.js' %}"></script>
 
 </body></html>
-

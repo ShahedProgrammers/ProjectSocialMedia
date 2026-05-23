@@ -18,4 +18,12 @@ def fetch_one(sql , params = None):
 def call_procedure(sql , params = None):
     with connection.cursor() as cursor :
         cursor.callproc(sql , params or [])
-        return cursor.fetchall()
+        rows = []
+        while True:
+            if cursor.description:
+                fetched = cursor.fetchall()
+                if fetched:
+                    rows = fetched
+            if not cursor.nextset():
+                break
+        return rows

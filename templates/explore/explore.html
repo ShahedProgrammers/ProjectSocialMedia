@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>اکسپلور | SocialMedia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="{% static 'home/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'explore/explore.css' %}" />
+  </head>
+  <body>
+    <nav>
+      <div class="container">
+        <div class="logo">
+          <p>SocialMedia</p>
+        </div>
+
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="search" placeholder="جستجو..." />
+        </div>
+
+        <div class="create">
+          <a href="{% url 'settings' %}" class="btn btn-primary" style="text-decoration: none;">تنظیمات</a>
+          <a href="{% url 'logout' %}" class="btn btn-primary" style="text-decoration: none; background-color: #e74c3c; margin-left: 5px;">
+            <i class="fas fa-sign-out-alt"></i> خروج
+          </a>
+          <a href="{% url 'profile' %}" style="text-decoration: none;">
+            <div class="profile-pic">
+              {% if profile_pic %}
+                <img src="data:image/jpeg;base64,{{ profile_pic }}" alt="Profile" />
+              {% else %}
+                <img src="{% static 'images/main-profile.jpg' %}" alt="Default Profile" />
+              {% endif %}
+              <div class="active"></div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <div class="container">
+        <div class="left-section">
+          <a href="{% url 'profile' %}" class="profile">
+            <div class="profile-pic sidebar-profile-pic">
+              {% if profile_pic %}
+                <img src="data:image/jpeg;base64,{{ profile_pic }}" alt="Profile" />
+              {% else %}
+                <img src="{% static 'images/main-profile.jpg' %}" alt="Default Profile" />
+              {% endif %}
+              <div class="active"></div>
+            </div>
+            <div class="handle">
+              <h4>{{ username }}</h4>
+              <p class="muted-text">{{ username }}</p>
+            </div>
+          </a>
+
+          <div class="sidebar">
+            <a href="{% url 'home' %}" class="menu-item">
+              <span><i class="fas fa-home"></i></span>
+              <h3>خانه</h3>
+            </a>
+            <a href="{% url 'explore' %}" class="menu-item active">
+              <span><i class="fa-regular fa-compass"></i></span>
+              <h3>اکسپلور</h3>
+            </a>
+          </div>
+
+          <a href="{% url 'create_post' %}" class="btn btn-primary create-post-link">
+            <i class="fas fa-plus"></i>
+            ایجاد پست
+          </a>
+        </div>
+
+        <div class="middle-section">
+          <div class="news-feeds" id="exploreFeed">
+            {% for post in posts %}
+            <article class="feed" data-post-id="{{ post.post_id }}">
+              <div class="head">
+                <a href="{% url 'user_profile' post.author_user_id %}" class="user author-link">
+                  <div class="profile-pic">
+                    {% if post.author_profile_pic %}
+                      <img src="data:image/jpeg;base64,{{ post.author_profile_pic }}" alt="{{ post.author_username }}" />
+                    {% else %}
+                      <img src="{% static 'images/main-profile.jpg' %}" alt="{{ post.author_username }}" />
+                    {% endif %}
+                  </div>
+                  <div class="info">
+                    <h3>{{ post.author_username }}</h3>
+                    <small>{{ post.created_at }}</small>
+                  </div>
+                </a>
+              </div>
+
+              {% if post.media_type == 'image' and post.media_url %}
+              <div class="post-img">
+                <img src="{{ post.media_url }}" alt="post media" />
+              </div>
+              {% elif post.media_type == 'video' and post.media_url %}
+              <div class="post-img">
+                <video src="{{ post.media_url }}" controls></video>
+              </div>
+              {% elif post.caption %}
+              <div class="post-text-only">{{ post.caption }}</div>
+              {% endif %}
+
+              <div class="action-btn">
+                <div class="interaction-btn">
+                  <button
+                    type="button"
+                    class="like-btn{% if post.is_liked %} liked{% endif %}"
+                    data-post-id="{{ post.post_id }}"
+                    data-is-liked="{{ post.is_liked|yesno:'true,false' }}"
+                    aria-label="لایک"
+                  >
+                    <i class="fa-{% if post.is_liked %}solid{% else %}regular{% endif %} fa-heart"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="comment-toggle-btn"
+                    data-post-id="{{ post.post_id }}"
+                    data-comments-enabled="{{ post.comments_enabled|yesno:'true,false' }}"
+                    aria-label="کامنت‌ها"
+                  >
+                    <i class="fa-regular fa-comment"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="liked-by">
+                <p>
+                  <b class="like-count">{{ post.like_count }}</b>
+                  لایک
+                </p>
+              </div>
+
+              {% if post.caption and post.media_url %}
+              <div class="caption">
+                <p>
+                  <a href="{% url 'user_profile' post.author_user_id %}" class="author-name-link">{{ post.author_username }}</a>
+                  {{ post.caption }}
+                  {% for tag in post.tags %}
+                    <span class="hash-tag">#{{ tag }}</span>
+                  {% endfor %}
+                </p>
+              </div>
+              {% elif post.tags %}
+              <div class="caption">
+                <p>
+                  {% for tag in post.tags %}
+                    <span class="hash-tag">#{{ tag }}</span>
+                  {% endfor %}
+                </p>
+              </div>
+              {% endif %}
+
+              <div class="comments-panel" id="comments-panel-{{ post.post_id }}" hidden>
+                <div class="comments-loading">در حال بارگذاری کامنت‌ها...</div>
+                <div class="comments-list"></div>
+                <p class="comments-empty" hidden>هنوز کامنتی ثبت نشده.</p>
+                <p class="comments-disabled" hidden>کامنت‌گذاری برای این پست غیرفعال است.</p>
+                <p class="comments-error" hidden></p>
+
+                {% if post.comments_enabled %}
+                <form class="comment-form">
+                  <input type="text" class="comment-input" placeholder="کامنت بنویسید..." maxlength="500" required />
+                  <button type="submit" class="btn btn-primary comment-submit-btn">ارسال</button>
+                </form>
+                {% endif %}
+              </div>
+            </article>
+            {% empty %}
+            <div class="empty-feed">
+              <p>هنوز پستی برای نمایش وجود ندارد.</p>
+              <a href="{% url 'create_post' %}" class="btn btn-primary">اولین پست را بسازید</a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      window.EXPLORE_LIKE_URL = "{% url 'toggle_like' 0 %}";
+      window.EXPLORE_COMMENTS_URL = "{% url 'post_comments' 0 %}";
+      window.CSRF_TOKEN = "{{ csrf_token }}";
+      window.CURRENT_USERNAME = "{{ username|escapejs }}";
+    </script>
+    <script src="{% static 'explore/explore.js' %}"></script>
+  </body>
+</html>
