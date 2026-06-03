@@ -188,4 +188,65 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  function buildFollowUrl(userId) {
+    return window.EXPLORE_FOLLOW_URL.replace('/0/', `/${userId}/`);
+  }
+
+  async function parseJsonResponse(response) {
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      throw new Error('پاسخ نامعتبر از سرور');
+    }
+    return response.json();
+  }
+
+  function updateFollowButtons(userId, isFollowing) {
+    document.querySelectorAll(`.follow-btn[data-user-id="${userId}"]`).forEach((button) => {
+      button.dataset.isFollowing = isFollowing ? 'true' : 'false';
+      button.classList.toggle('following', isFollowing);
+      button.textContent = isFollowing ? 'دنبال می‌کنید' : 'دنبال کردن';
+    });
+  }
+
+  document.querySelectorAll('.follow-btn').forEach((button) => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const userId = button.dataset.userId;
+      const isFollowing = button.dataset.isFollowing === 'true';
+      const follow = !isFollowing;
+
+      document.querySelectorAll(`.follow-btn[data-user-id="${userId}"]`).forEach((btn) => {
+        btn.disabled = true;
+      });
+
+      try {
+        const response = await fetch(buildFollowUrl(userId), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': window.CSRF_TOKEN,
+          },
+          body: JSON.stringify({ follow }),
+        });
+
+        const data = await parseJsonResponse(response);
+        if (!response.ok) {
+          alert(data.error || 'خطا در انجام عملیات');
+          return;
+        }
+
+        updateFollowButtons(userId, data.is_following);
+      } catch (error) {
+        console.error(error);
+        alert(error.message || 'خطا در ارتباط با سرور');
+      } finally {
+        document.querySelectorAll(`.follow-btn[data-user-id="${userId}"]`).forEach((btn) => {
+          btn.disabled = false;
+        });
+      }
+    });
+  });
 });

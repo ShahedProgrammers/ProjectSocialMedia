@@ -87,6 +87,40 @@
   color: var(--primary-color);
 }
 
+.middle-section .feed .head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.follow-btn {
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: #fff;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: 0.2s;
+}
+
+.follow-btn:hover {
+  opacity: 0.9;
+}
+
+.follow-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.follow-btn.following {
+  background: transparent;
+  color: var(--grey-color);
+  border-color: var(--grey-color);
+}
+
 .comment-toggle-btn {
   background: none;
   border: none;

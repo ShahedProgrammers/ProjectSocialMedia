@@ -37,7 +37,18 @@
         {% if is_own_profile %}
         <button class="edit-profile-btn" id="editProfileBtn">ویرایش پروفایل</button>
         {% else %}
-        <a href="{% url 'explore' %}" class="edit-profile-btn back-btn">بازگشت به اکسپلور</a>
+        <div class="profile-actions">
+          <button
+            type="button"
+            class="follow-btn{% if is_following %} following{% endif %}"
+            id="followBtn"
+            data-user-id="{{ profile.user_id }}"
+            data-is-following="{{ is_following|yesno:'true,false' }}"
+          >
+            {% if is_following %}دنبال می‌کنید{% else %}دنبال کردن{% endif %}
+          </button>
+          <a href="{% url 'explore' %}" class="edit-profile-btn back-btn">بازگشت به اکسپلور</a>
+        </div>
         {% endif %}
       </div>
 
@@ -163,9 +174,29 @@
   </div>
 </div>
 
+<div id="usersModal" class="modal">
+  <div class="modal-content users-modal-content">
+    <div class="modal-header">
+      <h2 id="usersModalTitle">کاربران</h2>
+      <span class="close-btn" id="closeUsersModalBtn">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div id="usersLoading" class="comments-loading">در حال بارگذاری...</div>
+      <div id="usersList" class="users-list"></div>
+      <p id="usersEmpty" class="comments-empty" style="display:none;">کاربری یافت نشد.</p>
+    </div>
+  </div>
+</div>
+
 <script>
   window.PROFILE_COMMENTS_BASE = "{% url 'post_comments' 0 %}";
   window.PROFILE_LIKE_URL = "{% url 'toggle_like' 0 %}";
+  window.PROFILE_FOLLOW_URL = "{% url 'toggle_follow' 0 %}";
+  window.PROFILE_FOLLOWERS_URL = "{% url 'user_followers' profile.user_id %}";
+  window.PROFILE_FOLLOWINGS_URL = "{% url 'user_followings' profile.user_id %}";
+  window.PROFILE_USER_URL = "{% url 'user_profile' 0 %}";
+  window.CURRENT_USER_ID = {{ request.session.user_id|default:'null' }};
+  window.IS_OWN_PROFILE = {{ is_own_profile|yesno:'true,false' }};
 </script>
 <script src="{% static 'profile/profile.js' %}"></script>
 

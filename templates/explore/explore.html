@@ -93,6 +93,16 @@
                     <small>{{ post.created_at }}</small>
                   </div>
                 </a>
+                {% if post.author_user_id != current_user_id %}
+                <button
+                  type="button"
+                  class="follow-btn{% if post.is_following %} following{% endif %}"
+                  data-user-id="{{ post.author_user_id }}"
+                  data-is-following="{{ post.is_following|yesno:'true,false' }}"
+                >
+                  {% if post.is_following %}دنبال می‌کنید{% else %}دنبال کردن{% endif %}
+                </button>
+                {% endif %}
               </div>
 
               {% if post.media_type == 'image' and post.media_url %}
@@ -186,8 +196,10 @@
     <script>
       window.EXPLORE_LIKE_URL = "{% url 'toggle_like' 0 %}";
       window.EXPLORE_COMMENTS_URL = "{% url 'post_comments' 0 %}";
+      window.EXPLORE_FOLLOW_URL = "{% url 'toggle_follow' 0 %}";
       window.CSRF_TOKEN = "{{ csrf_token }}";
       window.CURRENT_USERNAME = "{{ username|escapejs }}";
+      window.CURRENT_USER_ID = {{ current_user_id }};
     </script>
     <script src="{% static 'explore/explore.js' %}"></script>
   </body>
